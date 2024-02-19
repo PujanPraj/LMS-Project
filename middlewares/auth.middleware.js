@@ -31,7 +31,7 @@ export const isAdmin = asyncHandler(async (req, res, next) => {
 export const isInstructor = asyncHandler(async (req, res, next) => {
   const { email } = req.user;
   const isInstructor = await User.findOne({ email });
-  if (isInstructor.role !== "admin") {
+  if (isInstructor.role !== "instructor") {
     throw new Error("Yor are not an Instructor");
   } else {
     next();

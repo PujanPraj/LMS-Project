@@ -72,6 +72,20 @@ export const getAllUsers = asyncHandler(async (req, res) => {
   }
 });
 
+//get a user
+export const getAUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongodbId(id);
+  try {
+    const getProfile = await User.findById(id);
+    return res
+      .status(200)
+      .json(new ApiResponse(200, "User fetched successfully", getProfile));
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 //update user profile
 export const updateUser = asyncHandler(async (req, res) => {
   const { _id } = req.user;
@@ -83,6 +97,87 @@ export const updateUser = asyncHandler(async (req, res) => {
     return res
       .status(200)
       .json(new ApiResponse(200, "User updated successfully", user));
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+//delete a user
+export const deleteAUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongodbId(id);
+  try {
+    const deleteAUser = await User.findByIdAndDelete(id);
+    return res
+      .status(200)
+      .json(new ApiResponse(200, "User deleted successfully", deleteAUser));
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+//block a user
+export const blockUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongodbId(id);
+  try {
+    const block = await User.findByIdAndUpdate(
+      id,
+      { isBlocked: true },
+      { new: true }
+    );
+    return res
+      .status(200)
+      .json(new ApiResponse(200, "User blocked successfully"));
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+//unblock a user
+export const unBlockUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongodbId(id);
+  try {
+    const unBlock = await User.findByIdAndUpdate(
+      id,
+      { isBlocked: false },
+      { new: true }
+    );
+    return res
+      .status(200)
+      .json(new ApiResponse(200, "User unblocked successfully"));
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+//update password
+export const updatePassword = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+  validateMongodbId(_id);
+  try {
+    const user = await User.findById(_id);
+
+    if (!(oldPassword && newPassword && confirmPassword)) {
+      throw new Error(
+        "Old password, new password and confirm password are required"
+      );
+    }
+
+    if (oldPassword === newPassword) {
+      throw new Error("New password cannot be same as old password");
+    }
+
+    if (newPassword !== confirmPassword) {
+      throw new Error("New password and confirm password do not match");
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json(new ApiResponse(200, "Password updated successfully"));
   } catch (error) {
     throw new Error(error);
   }
