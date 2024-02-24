@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 const userSchema = new mongoose.Schema(
   {
@@ -23,12 +24,10 @@ const userSchema = new mongoose.Schema(
     },
     mobile: {
       type: String,
-      required: true,
       unique: true,
     },
     password: {
       type: String,
-      required: true,
     },
     userImage: {
       type: String,
@@ -41,7 +40,6 @@ const userSchema = new mongoose.Schema(
     },
     profession: {
       type: String,
-      required: true,
     },
     isBlocked: {
       type: Boolean,
@@ -71,6 +69,16 @@ userSchema.pre("save", async function (next) {
 
 userSchema.methods.isPasswordMatched = async function (enteredPassword) {
   return await bcryptjs.compare(enteredPassword, this.password);
+};
+
+userSchema.methods.createPasswordResetToken = async function () {
+  const resetToken = crypto.randomBytes(20).toString("hex");
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  return resetToken;
 };
 
 export const generateAccessToken = async (id) => {

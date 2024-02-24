@@ -6,6 +6,7 @@ import {
 import asyncHandler from "express-async-handler";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { validateMongodbId } from "../utils/validateMongoDbId.js";
+import crypto from "crypto";
 
 //register user
 export const registerUser = asyncHandler(async (req, res) => {
@@ -181,4 +182,45 @@ export const updatePassword = asyncHandler(async (req, res) => {
   } catch (error) {
     throw new Error(error);
   }
+});
+
+//forgot password token
+export const forgotPasswordToken = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) throw new Error("User not found with this email address");
+    const resetPasswordToken = await user.createPasswordResetToken();
+    await user.save();
+    const resetLink = `http://localhost:4000/api/users/${resetPasswordToken}`;
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          "Password reset link sent to your email",
+          resetLink
+        )
+      );
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+//reset password
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { password } = req.body;
+  const { token } = req.params;
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+  if (!user) throw new Error("Token expired. Please try again");
+  user.password = password;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+  res.status(200).json(new ApiResponse(200, "Password updated successfully"));
 });
