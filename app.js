@@ -28,6 +28,12 @@ import tutorialRouter from "./routes/tutorial.routes.js";
 import newsletterRouter from "./routes/newsletter.routes.js";
 import reviewRouter from "./routes/review.routes.js";
 import contactRouter from "./routes/contact.routes.js";
+import videoRouter from "./routes/video.routes.js";
+import documentationRouter from "./routes/documentation.routes.js";
+import docCatRouter from "./routes/docCat.routes.js";
+import blogCatRouter from "./routes/blogCat.routes.js";
+import blogRouter from "./routes/blog.routes.js";
+import videoCatRouter from "./routes/videoCat.routes.js";
 
 app.use("/api/users", userRouters);
 app.use("/", googleRouter);
@@ -36,6 +42,12 @@ app.use("/api/tutorial", tutorialRouter);
 app.use("/api/", newsletterRouter);
 app.use("/api/review", reviewRouter);
 app.use("/api/contact", contactRouter);
+app.use("/api/video", videoRouter);
+app.use("/api/documentation", documentationRouter);
+app.use("/api/docCategory", docCatRouter);
+app.use("/api/blogCategory", blogCatRouter);
+app.use("/api/blog", blogRouter);
+app.use("/api/videoCat", videoCatRouter);
 
 //custom middlewares
 import { handleError, notFound } from "./middlewares/errorHandler.js";
