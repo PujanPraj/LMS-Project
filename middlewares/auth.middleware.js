@@ -37,3 +37,12 @@ export const isInstructor = asyncHandler(async (req, res, next) => {
     next();
   }
 });
+
+export const isBoth = asyncHandler(async (req, res, next) => {
+  const { email } = req.user;
+  const isBoth = await User.findOne({ email });
+  if ((isBoth.role !== "admin" || isBoth.role !== "instructor") === false) {
+    throw new Error(isBoth.role !== "admin" || isBoth.role !== "instructor");
+  }
+  next();
+});

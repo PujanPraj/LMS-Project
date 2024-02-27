@@ -34,6 +34,8 @@ import docCatRouter from "./routes/docCat.routes.js";
 import blogCatRouter from "./routes/blogCat.routes.js";
 import blogRouter from "./routes/blog.routes.js";
 import videoCatRouter from "./routes/videoCat.routes.js";
+import courseCatRouter from "./routes/courseCat.routes.js";
+import courseRouter from "./routes/course.routes.js";
 
 app.use("/api/users", userRouters);
 app.use("/", googleRouter);
@@ -48,6 +50,9 @@ app.use("/api/docCategory", docCatRouter);
 app.use("/api/blogCategory", blogCatRouter);
 app.use("/api/blog", blogRouter);
 app.use("/api/videoCat", videoCatRouter);
+app.use("/api/courseCat", courseCatRouter);
+app.use("/api/courseCat", courseCatRouter);
+app.use("/api/course", courseRouter);
 
 //custom middlewares
 import { handleError, notFound } from "./middlewares/errorHandler.js";

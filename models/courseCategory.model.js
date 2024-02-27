@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const videoCatSchema = new mongoose.Schema(
+const courseCatSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -18,4 +18,4 @@ const videoCatSchema = new mongoose.Schema(
   }
 );
 
-export const videoCat = mongoose.model("videoCat", videoCatSchema);
+export const courseCat = mongoose.model("courseCat", courseCatSchema);
